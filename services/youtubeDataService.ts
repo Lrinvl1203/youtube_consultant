@@ -40,15 +40,15 @@ export const fetchVideoDetails = async (videoId: string, apiKey: string): Promis
     const video = result.items[0];
     return {
         id: video.id,
-        title: video.snippet.title,
-        description: video.snippet.description,
-        tags: video.snippet.tags || [],
-        thumbnailUrl: video.snippet.thumbnails.high?.url || video.snippet.thumbnails.default.url,
-        channelTitle: video.snippet.channelTitle,
+        title: video.snippet?.title || 'No title',
+        description: video.snippet?.description || 'No description',
+        tags: video.snippet?.tags || [],
+        thumbnailUrl: video.snippet?.thumbnails?.high?.url || video.snippet?.thumbnails?.default?.url || '',
+        channelTitle: video.snippet?.channelTitle || 'Unknown channel',
         stats: {
-            viewCount: video.statistics.viewCount,
-            likeCount: video.statistics.likeCount,
-            commentCount: video.statistics.commentCount,
+            viewCount: video.statistics?.viewCount || '0',
+            likeCount: video.statistics?.likeCount || '0',
+            commentCount: video.statistics?.commentCount || '0',
         }
     };
 };
@@ -111,13 +111,13 @@ export const fetchChannelData = async (identifier: string, apiKey: string): Prom
 
     return {
         id: channelId,
-        title: channelDetails.snippet.title,
-        description: channelDetails.snippet.description,
-        thumbnailUrl: channelDetails.snippet.thumbnails.default.url,
-        stats: channelDetails.statistics,
-        videos: videosResult.items.map((item: any) => ({
-            id: item.id.videoId,
-            title: item.snippet.title,
-        })),
+        title: channelDetails.snippet?.title || 'Unknown channel',
+        description: channelDetails.snippet?.description || 'No description',
+        thumbnailUrl: channelDetails.snippet?.thumbnails?.default?.url || '',
+        stats: channelDetails.statistics || { subscriberCount: '0', viewCount: '0', videoCount: '0' },
+        videos: videosResult.items?.map((item: any) => ({
+            id: item.id?.videoId || '',
+            title: item.snippet?.title || 'No title',
+        })) || [],
     };
 };
