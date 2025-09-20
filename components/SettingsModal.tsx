@@ -8,25 +8,28 @@ interface SettingsModalProps {
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-    const { apiKey, setApiKey, isKeyValid, testApiKey } = useSettings();
+    const { apiKey, setApiKey, geminiApiKey, setGeminiApiKey, isKeyValid, testApiKey } = useSettings();
     const { t } = useLanguage();
     const [localApiKey, setLocalApiKey] = useState(apiKey || '');
+    const [localGeminiApiKey, setLocalGeminiApiKey] = useState(geminiApiKey || '');
     const [isTesting, setIsTesting] = useState(false);
     const [testStatus, setTestStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     useEffect(() => {
         setLocalApiKey(apiKey || '');
+        setLocalGeminiApiKey(geminiApiKey || '');
         if (apiKey) {
             setTestStatus(isKeyValid ? 'success' : 'error');
         } else {
             setTestStatus('idle');
         }
-    }, [apiKey, isKeyValid, isOpen]);
+    }, [apiKey, geminiApiKey, isKeyValid, isOpen]);
 
     if (!isOpen) return null;
 
     const handleSave = () => {
         setApiKey(localApiKey);
+        setGeminiApiKey(localGeminiApiKey);
         onClose();
     };
     
@@ -45,7 +48,21 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
                 <h2 className="text-2xl font-bold text-white mb-4">{t('settingsModal.title')}</h2>
-                <div className="space-y-4">
+                <div className="space-y-6">
+                    <div>
+                        <label htmlFor="gemini-api-key" className="block text-sm font-medium text-slate-300 mb-1">Gemini AI API Key</label>
+                        <p className="text-xs text-slate-500 mb-2">Required for AI features (keyword analysis, channel analysis, chat consultant). Your key is stored locally and never sent to our servers.</p>
+                        <input
+                            id="gemini-api-key"
+                            type="password"
+                            value={localGeminiApiKey}
+                            onChange={(e) => setLocalGeminiApiKey(e.target.value)}
+                            className="bg-slate-900 border border-slate-600 text-white placeholder-slate-400 text-base rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5"
+                            placeholder="Enter your Gemini API key"
+                        />
+                        <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-xs text-cyan-400 hover:underline mt-2 inline-block">How to get a Gemini API Key?</a>
+                    </div>
+
                     <div>
                         <label htmlFor="api-key" className="block text-sm font-medium text-slate-300 mb-1">{t('settingsModal.apiKey.label')}</label>
                         <p className="text-xs text-slate-500 mb-2">{t('settingsModal.apiKey.description')}</p>

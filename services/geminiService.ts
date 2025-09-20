@@ -2,11 +2,14 @@ import { GoogleGenAI, Type, Chat } from "@google/genai";
 import { VideoIdea, ChannelAnalysis, ChatMessage, YouTubeChannel, YouTubeVideoDetails, OneMillionAnalysis, VideoProposal, StoryboardScene } from '../types';
 import { Language } from "../lib/translations";
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
+let aiInstance: GoogleGenAI | null = null;
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAI = (apiKey: string): GoogleGenAI => {
+    if (!aiInstance || aiInstance !== aiInstance) {
+        aiInstance = new GoogleGenAI({ apiKey });
+    }
+    return aiInstance;
+};
 
 const videoIdeaSchema = {
   type: Type.ARRAY,
@@ -313,7 +316,7 @@ const formatVideoDataForPrompt = (video: YouTubeVideoDetails, role: string, labe
 - **${labels.tags}:** ${video.tags.slice(0, 10).join(', ')}
 `;
 
-export const generateOneMillionConsulting = async (benchmarkVideo: YouTubeVideoDetails, language: Language, userVideo?: YouTubeVideoDetails): Promise<OneMillionAnalysis> => {
+export const generateOneMillionConsulting = async (apiKey: string, benchmarkVideo: YouTubeVideoDetails, language: Language, userVideo?: YouTubeVideoDetails): Promise<OneMillionAnalysis> => {
     const isComparative = !!userVideo;
     const selectedPrompts = oneMillionPrompts[language] || oneMillionPrompts.en;
 
@@ -326,6 +329,7 @@ export const generateOneMillionConsulting = async (benchmarkVideo: YouTubeVideoD
         prompt += `\n${selectedPrompts.newTask.title}\n${selectedPrompts.newTask.step1}\n${selectedPrompts.newTask.step2}\n`;
     }
 
+    const ai = getAI(apiKey);
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
@@ -339,7 +343,7 @@ export const generateOneMillionConsulting = async (benchmarkVideo: YouTubeVideoD
     return JSON.parse(jsonText);
 };
 
-export const generateFullScript = async (scriptOutline: VideoProposal['script'], videoTitle: string, language: Language): Promise<string> => {
+export const generateFullScript = async (apiKey: string, scriptOutline: VideoProposal['script'], videoTitle: string, language: Language): Promise<string> => {
     const selectedPrompts = oneMillionPrompts[language] || oneMillionPrompts.en;
     const prompt = `
 ${selectedPrompts.fullScript.prompt}
@@ -354,6 +358,7 @@ ${scriptOutline.mainPoints.map(p => `  - ${p}`).join('\n')}
 - **Call to Action:** ${scriptOutline.callToAction}
 - **Outro:** ${scriptOutline.outro}
 `;
+    const ai = getAI(apiKey);
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
@@ -361,7 +366,7 @@ ${scriptOutline.mainPoints.map(p => `  - ${p}`).join('\n')}
     return response.text;
 }
 
-export const generateStoryboardPrompts = async (videoTitle: string, scriptOutline: VideoProposal['script'], language: Language): Promise<StoryboardScene[]> => {
+export const generateStoryboardPrompts = async (apiKey: string, videoTitle: string, scriptOutline: VideoProposal['script'], language: Language): Promise<StoryboardScene[]> => {
     const selectedPrompts = oneMillionPrompts[language] || oneMillionPrompts.en;
     const prompt = `
 ${selectedPrompts.storyboard.prompt}
@@ -377,6 +382,7 @@ ${scriptOutline.mainPoints.map(p => `  - ${p}`).join('\n')}
 - **Outro:** ${scriptOutline.outro}
 `;
 
+    const ai = getAI(apiKey);
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
@@ -389,7 +395,8 @@ ${scriptOutline.mainPoints.map(p => `  - ${p}`).join('\n')}
     return JSON.parse(jsonText);
 };
 
-export const generateThumbnailImage = async (prompt: string): Promise<string> => {
+export const generateThumbnailImage = async (apiKey: string, prompt: string): Promise<string> => {
+    const ai = getAI(apiKey);
     const response = await ai.models.generateImages({
         model: 'imagen-4.0-generate-001',
         prompt: `Create a cinematic, high-impact YouTube thumbnail based on this concept: "${prompt}". Ensure it is visually striking, easy to read, and evokes curiosity. Aspect ratio 16:9.`,
@@ -409,9 +416,10 @@ export const generateThumbnailImage = async (prompt: string): Promise<string> =>
 };
 
 
-export const generateKeywordIdeas = async (keyword: string): Promise<VideoIdea[]> => {
+export const generateKeywordIdeas = async (apiKey: string, keyword: string): Promise<VideoIdea[]> => {
   const prompt = `You are an expert YouTube growth strategist. A user wants to create content about "${keyword}". Generate 5 creative, high-engagement video ideas. For each idea, provide a catchy, SEO-optimized title, a brief description, and 3-5 relevant keywords/tags.`;
-  
+
+  const ai = getAI(apiKey);
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
@@ -425,7 +433,7 @@ export const generateKeywordIdeas = async (keyword: string): Promise<VideoIdea[]
   return JSON.parse(jsonText);
 };
 
-export const generateChannelAnalysis = async (channelData: YouTubeChannel): Promise<ChannelAnalysis> => {
+export const generateChannelAnalysis = async (apiKey: string, channelData: YouTubeChannel): Promise<ChannelAnalysis> => {
     const videoTitles = channelData.videos.map(v => `- "${v.title}"`).join('\n');
     const prompt = `
 You are a professional YouTube channel analyst. I will provide you with data fetched directly from the YouTube API.
@@ -446,6 +454,7 @@ Based *only* on this provided data, perform an expert analysis. Provide:
 4.  **Three Concrete Video Ideas:** Provide titles and descriptions for three video ideas that directly capitalize on the opportunities you've identified and are relevant to the recent video titles.
 `;
 
+  const ai = getAI(apiKey);
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
@@ -460,7 +469,8 @@ Based *only* on this provided data, perform an expert analysis. Provide:
 };
 
 
-export const getChatStream = async (history: ChatMessage[], newMessage: string) => {    
+export const getChatStream = async (apiKey: string, history: ChatMessage[], newMessage: string) => {
+    const ai = getAI(apiKey);
     const chat = ai.chats.create({
         model: 'gemini-2.5-flash',
         config: {

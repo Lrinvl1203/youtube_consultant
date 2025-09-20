@@ -23,16 +23,15 @@ An AI-powered assistant for YouTube creators, providing data-driven insights for
    npm install
    ```
 
-2. **Set up environment variables:**
-   Create a `.env.local` file and add your Gemini API key:
-   ```
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-
-3. **Run the development server:**
+2. **Run the development server:**
    ```bash
    npm run dev
    ```
+
+3. **Configure API keys:**
+   - Open the app and click the settings (⚙️) button
+   - Add your **Gemini API Key** for AI features
+   - Add your **YouTube Data API Key** for channel analysis (optional)
 
 4. **Build for production:**
    ```bash
@@ -45,9 +44,9 @@ This project is ready for deployment on **Netlify** or **Vercel**. Simply push t
 
 ### Quick Deploy
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/your-username/your-repo)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/Lrinvl1203/youtube_consultant)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/your-repo)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Lrinvl1203/youtube_consultant)
 
 ### Manual Deployment
 
@@ -63,10 +62,11 @@ This project is ready for deployment on **Netlify** or **Vercel**. Simply push t
 2. **Deploy on Netlify or Vercel:**
    - Connect your GitHub repository
    - Build settings are automatically detected
-   - Set environment variable: `GEMINI_API_KEY`
+   - **No environment variables needed!** ✨
 
 3. **Post-deployment:**
-   - Users can set YouTube API keys through the app's settings
+   - Users configure API keys directly in the app settings
+   - All API keys are stored locally in the browser
 
 📖 **Detailed deployment guide:** See [DEPLOYMENT.md](./DEPLOYMENT.md)
 

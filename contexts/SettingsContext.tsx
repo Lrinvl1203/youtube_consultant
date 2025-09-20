@@ -6,6 +6,8 @@ const QUOTA_COST_PER_ANALYSIS = 201; // search(channel)=100 + channels(stats)=1 
 interface SettingsContextType {
     apiKey: string | null;
     setApiKey: (key: string | null) => void;
+    geminiApiKey: string | null;
+    setGeminiApiKey: (key: string | null) => void;
     quotaUsed: number;
     incrementQuotaUsage: () => void;
     isKeyValid: boolean;
@@ -16,6 +18,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [apiKey, setApiKeyState] = useState<string | null>(() => localStorage.getItem('youtube_api_key'));
+    const [geminiApiKey, setGeminiApiKeyState] = useState<string | null>(() => localStorage.getItem('gemini_api_key'));
     const [quotaUsed, setQuotaUsed] = useState<number>(0);
     const [isKeyValid, setIsKeyValid] = useState(false);
 
@@ -65,6 +68,16 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         }
     };
 
+    const setGeminiApiKey = (key: string | null) => {
+        if (key && key.trim() !== "") {
+            localStorage.setItem('gemini_api_key', key);
+            setGeminiApiKeyState(key);
+        } else {
+            localStorage.removeItem('gemini_api_key');
+            setGeminiApiKeyState(null);
+        }
+    };
+
     const incrementQuotaUsage = () => {
         setQuotaUsed(prev => {
             const newQuota = prev + QUOTA_COST_PER_ANALYSIS;
@@ -75,7 +88,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
 
     return (
-        <SettingsContext.Provider value={{ apiKey, setApiKey, quotaUsed, incrementQuotaUsage, isKeyValid, testApiKey }}>
+        <SettingsContext.Provider value={{ apiKey, setApiKey, geminiApiKey, setGeminiApiKey, quotaUsed, incrementQuotaUsage, isKeyValid, testApiKey }}>
             {children}
         </SettingsContext.Provider>
     );

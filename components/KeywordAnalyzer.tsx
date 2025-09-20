@@ -4,6 +4,7 @@ import { VideoIdea } from '../types';
 import { LoadingSpinner } from './common/LoadingSpinner';
 import { ActionButton } from './common/ActionButton';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useSettings } from '../contexts/SettingsContext';
 
 const IdeaCard: React.FC<{ idea: VideoIdea }> = ({ idea }) => (
   <div className="bg-slate-800/50 rounded-lg shadow-lg p-6 border border-slate-700 transform hover:scale-105 hover:border-cyan-500 transition-all duration-300">
@@ -25,17 +26,22 @@ export const KeywordAnalyzer: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useLanguage();
+  const { geminiApiKey } = useSettings();
 
   const handleAnalyze = async () => {
     if (!keyword.trim()) {
       setError('keywordAnalyzer.error.enterKeyword');
       return;
     }
+    if (!geminiApiKey) {
+      setError('Please set your Gemini API key in settings first.');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     setIdeas([]);
     try {
-      const result = await generateKeywordIdeas(keyword);
+      const result = await generateKeywordIdeas(geminiApiKey, keyword);
       setIdeas(result);
     } catch (e) {
       setError('keywordAnalyzer.error.generateFailed');

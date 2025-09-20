@@ -34,37 +34,34 @@
    - 빌드 설정은 자동 감지됨 (`vercel.json` 파일 기반)
    - Deploy 클릭
 
-## 🔧 환경변수 설정
+## ✨ 간단한 배포 (환경변수 불필요!)
 
-배포 후 다음 환경변수를 설정해야 합니다:
+이 프로젝트는 **환경변수 설정이 필요하지 않습니다!** 사용자가 앱 내에서 직접 API 키를 설정합니다.
 
-### 필수 환경변수
+### 배포 후 사용법
 
-| 변수명 | 설명 | 획득 방법 |
-|--------|------|-----------|
-| `GEMINI_API_KEY` | Google Gemini AI API 키 | [Google AI Studio](https://makersuite.google.com/app/apikey)에서 생성 |
+1. **배포된 사이트 접속**
+2. **설정 (⚙️) 버튼 클릭**
+3. **API 키 입력:**
+   - **Gemini API Key**: AI 기능용 (필수)
+   - **YouTube Data API Key**: 채널 분석용 (선택사항)
+4. **저장** - 모든 키는 브라우저에 로컬로 저장됨
 
-### Netlify에서 환경변수 설정
+### API 키 발급 방법
 
-1. Netlify 대시보드 → Site settings → Environment variables
-2. "Add a variable" 클릭
-3. Key: `GEMINI_API_KEY`, Value: 실제 API 키 입력
-4. Save 클릭
-5. Site를 다시 배포 (Deploys → Trigger deploy → Deploy site)
+#### Gemini API 키
+- **URL**: https://makersuite.google.com/app/apikey
+- **용도**: 키워드 분석, 채널 분석, 채팅 컨설턴트, 100만 조회수 컨설턴트
 
-### Vercel에서 환경변수 설정
-
-1. Vercel 대시보드 → Project settings → Environment Variables
-2. Name: `GEMINI_API_KEY`, Value: 실제 API 키 입력
-3. Add 클릭
-4. 새로운 배포 트리거 또는 Redeploy
+#### YouTube Data API 키 (선택사항)
+- **URL**: https://developers.google.com/youtube/v3/getting-started
+- **용도**: 채널 분석 기능
 
 ## 📋 배포 전 체크리스트
 
-- [ ] `.env.local` 파일이 `.gitignore`에 포함되어 있는지 확인
-- [ ] Gemini API 키가 유효한지 로컬에서 테스트
 - [ ] `npm run build`가 성공적으로 실행되는지 확인
 - [ ] GitHub 저장소가 public 또는 Netlify/Vercel에서 접근 가능한지 확인
+- [ ] 모든 환경변수 파일이 제거되었는지 확인
 
 ## 🔗 추가 설정
 
