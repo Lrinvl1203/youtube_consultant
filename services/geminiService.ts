@@ -310,10 +310,10 @@ const oneMillionPrompts = {
 const formatVideoDataForPrompt = (video: YouTubeVideoDetails, role: string, labels: { title: string; views: string; likes: string; description: string; tags: string; }, detailsLabel: string) => `
 **${role} ${detailsLabel}:**
 - **${labels.title}:** ${video.title}
-- **${labels.views}:** ${parseInt(video.stats.viewCount, 10).toLocaleString()}
-- **${labels.likes}:** ${parseInt(video.stats.likeCount, 10).toLocaleString()}
-- **${labels.description}:** ${video.description.substring(0, 300)}...
-- **${labels.tags}:** ${video.tags.slice(0, 10).join(', ')}
+- **${labels.views}:** ${parseInt(video.stats?.viewCount || '0', 10).toLocaleString()}
+- **${labels.likes}:** ${parseInt(video.stats?.likeCount || '0', 10).toLocaleString()}
+- **${labels.description}:** ${video.description?.substring(0, 300) || 'No description'}...
+- **${labels.tags}:** ${video.tags?.slice(0, 10).join(', ') || 'No tags'}
 `;
 
 export const generateOneMillionConsulting = async (apiKey: string, benchmarkVideo: YouTubeVideoDetails, language: Language, userVideo?: YouTubeVideoDetails): Promise<OneMillionAnalysis> => {
@@ -440,9 +440,9 @@ You are a professional YouTube channel analyst. I will provide you with data fet
 Analyze the following channel:
 
 **Channel Name:** ${channelData.title}
-**Subscribers:** ${parseInt(channelData.stats.subscriberCount).toLocaleString()}
-**Total Views:** ${parseInt(channelData.stats.viewCount).toLocaleString()}
-**Total Videos:** ${parseInt(channelData.stats.videoCount).toLocaleString()}
+**Subscribers:** ${parseInt(channelData.stats?.subscriberCount || '0').toLocaleString()}
+**Total Views:** ${parseInt(channelData.stats?.viewCount || '0').toLocaleString()}
+**Total Videos:** ${parseInt(channelData.stats?.videoCount || '0').toLocaleString()}
 
 **Recent Video Titles:**
 ${videoTitles}

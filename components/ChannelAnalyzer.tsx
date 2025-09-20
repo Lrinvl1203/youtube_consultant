@@ -15,9 +15,9 @@ const ChannelHeader: React.FC<{ channel: YouTubeChannel }> = ({ channel }) => {
             <div className="text-center sm:text-left">
                 <h3 className="text-2xl font-bold text-white">{channel.title}</h3>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 mt-2 text-slate-300">
-                    <span><strong className="text-white">{Number(channel.stats.subscriberCount).toLocaleString()}</strong> {t('channelAnalyzer.subscribers')}</span>
-                    <span><strong className="text-white">{Number(channel.stats.viewCount).toLocaleString()}</strong> {t('channelAnalyzer.views')}</span>
-                    <span><strong className="text-white">{Number(channel.stats.videoCount).toLocaleString()}</strong> {t('channelAnalyzer.videos')}</span>
+                    <span><strong className="text-white">{Number(channel.stats?.subscriberCount || 0).toLocaleString()}</strong> {t('channelAnalyzer.subscribers')}</span>
+                    <span><strong className="text-white">{Number(channel.stats?.viewCount || 0).toLocaleString()}</strong> {t('channelAnalyzer.views')}</span>
+                    <span><strong className="text-white">{Number(channel.stats?.videoCount || 0).toLocaleString()}</strong> {t('channelAnalyzer.videos')}</span>
                 </div>
             </div>
         </div>
